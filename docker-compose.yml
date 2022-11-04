@@ -1,0 +1,30 @@
+version: "3.7"
+
+services:
+  postgis:
+    image: postgis/postgis:13-3.1
+    restart: always
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: mydb
+      POSTGRES_PASSWORD: postgres
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgis
+
+volumes:
+    postgresql-data:
+      name: "postgres_data"
